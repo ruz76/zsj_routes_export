@@ -24,13 +24,14 @@ public class ZsjDAO {
     private final Jdbc3SimpleDataSource dataSource;
 
     @Autowired
-    public ZsjDAO(@Value("${jdbc.connection}") String jdbcConnection,
+    public ZsjDAO(@Value("${jdbc.host}") String jdbcHost,
+                  @Value("${jdbc.database}") String jdbcDatabase,
                   @Value("${jdbc.name}") String jdbcName,
                   @Value("${jdbc.password}") String jdbcPassword) throws ClassNotFoundException {
         this.dataSource = new Jdbc3SimpleDataSource();
         dataSource.setPassword(jdbcPassword);
         dataSource.setUser(jdbcName);
-        dataSource.setUrl(jdbcConnection);
+        dataSource.setUrl("jdbc:postgresql://" +jdbcHost+ "/" + jdbcDatabase);
     }
 
     /**

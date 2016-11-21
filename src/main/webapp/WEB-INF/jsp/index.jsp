@@ -50,11 +50,12 @@
     }
 
     function myZoomHandler() {
-        var currentZoom = map.getZoom();
-        if (currentZoom > 15 && map.hasLayer(heatmapLayer) == false) {
+        var currentZoom = mymap.getZoom();
+        console.log(currentZoom);
+        if (currentZoom > 8 && mymap.hasLayer(district_boundary) == false) {
             district_boundary.addTo(mymap);
         } else {
-
+            mymap.removeLayer(district_boundary);
         }
     }
 
@@ -71,13 +72,25 @@
 
     $.ajax({
     dataType: "json",
-    url: "JSON",
+    url: "zsj.json",
     success: function(data) {
+        console.log("DATA");
         $(data.features).each(function(key, data) {
             district_boundary.addData(data);
         });
     }
-    }).error(function() {});
+    }).error(function()
+    {
+        console.log("DATA ERROR");
+    }
+    );
+
+    //district_boundary.addTo(mymap);
+
+    mymap.on('zoomend', function (e) {
+        myZoomHandler();
+    });
+
 </script>
 
 </body>

@@ -15,10 +15,25 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ExportJob implements Callable<String> {
     private String view;
+
+    private final String jdbcHost;
+    private final String jdbcDatabase;
+    private final String jdbcName;
+    private final String jdbcPassword;
+
     private final AtomicInteger status = new AtomicInteger();
 
-    public ExportJob(String view) {
+
+    public ExportJob(String view, String jdbcHost, String jdbcDatabase, String jdbcName, String jdbcPassword) {
         this.view = view;
+        this.jdbcHost = jdbcHost;
+        this.jdbcDatabase = jdbcDatabase;
+        this.jdbcName = jdbcName;
+        this.jdbcPassword = jdbcPassword;
+    }
+
+    public int getStatus() {
+        return status.get();
     }
 
     @Override
@@ -33,7 +48,7 @@ public class ExportJob implements Callable<String> {
             Utils u = new Utils();
             File f = new File(u.getPath() +  "/" + view + ".shp");
             params[2] = f.getAbsolutePath();
-            params[3] = "PG:host=test.vsb.cz user=test dbname=test password=test";
+            params[3] = "PG:host=" +jdbcHost+ " user=" +jdbcName+ " dbname=" +jdbcDatabase+ " password=" + jdbcPassword;
             params[4] = this.view;
             params[5] = "-progress";
             for (int i=0; i<params.length; i++) {
@@ -51,7 +66,7 @@ public class ExportJob implements Callable<String> {
                 String data = new String(ret);
                 if (data.matches(regex)) {
                     if (!data.equals("0")) {
-                	status+=10;
+                	    status.addAndGet(10);
                     }
                 }
             }
